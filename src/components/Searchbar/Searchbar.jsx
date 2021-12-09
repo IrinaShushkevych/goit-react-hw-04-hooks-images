@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import ImageSearchIcon from '@mui/icons-material/ImageSearch'
 import s from './Searchbar.module.css'
 
-export default function Searchbar({ onSetQuery }) {
+function Searchbar({ onSetQuery }) {
   const [query, setQuery] = useState('')
 
   const onSubmitForm = (e) => {
@@ -44,3 +44,5 @@ export default function Searchbar({ onSetQuery }) {
 Searchbar.propTypes = {
   onSetQuery: PropTypes.func.isRequired,
 }
+
+export default Searchbar

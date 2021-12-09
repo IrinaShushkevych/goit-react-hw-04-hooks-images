@@ -9,14 +9,13 @@ import Modal from '../Modal'
 
 export default function Main() {
   const myRef = useRef(null)
-  const [perPage, setPerPage] = useState(12)
+  const [perPage] = useState(12)
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsImg, setItemsImg] = useState([])
   const [isLastPage, setIsLastPage] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [itemLooking, setItemLooking] = useState(null)
-  const [prevQuery, setPrevQuery] = useState(null)
 
   const clearData = () => {
     setItemsImg([])
@@ -31,15 +30,23 @@ export default function Main() {
   }
 
   const onChangeQuery = (val) => {
-    setPrevQuery(searchQuery)
+    setItemsImg([])
+    setCurrentPage(1)
     setSearchQuery(val)
     setIsLoading('true')
-    setCurrentPage(1)
+  }
+
+  const onClickMore = () => {
+    setCurrentPage((prevState) => prevState + 1)
+    setIsLoading(true)
+  }
+
+  const onClickImg = (el) => {
+    setItemLooking({ src: el.dataset.src, tags: el.alt })
   }
 
   useEffect(() => {
-    const newSearch = searchQuery === prevQuery ? false : true
-    if (isLoading) {
+    if (isLoading && searchQuery) {
       API.getSearchImages(currentPage, perPage, searchQuery)
         .then((data) => {
           if (!data) {
@@ -48,33 +55,20 @@ export default function Main() {
             return
           }
 
-          setItemsImg((prevState) =>
-            newSearch
-              ? [
-                  ...data.hits.map((el) => ({
-                    id: el.id,
-                    webformatURL: el.webformatURL,
-                    largeImageURL: el.largeImageURL,
-                    tags: el.tags,
-                  })),
-                ]
-              : [
-                  ...prevState,
-                  ...data.hits.map((el) => ({
-                    id: el.id,
-                    webformatURL: el.webformatURL,
-                    largeImageURL: el.largeImageURL,
-                    tags: el.tags,
-                  })),
-                ],
-          )
-          setPrevQuery(searchQuery)
+          setItemsImg((prevState) => [
+            ...prevState,
+            ...data.hits.map((el) => ({
+              id: el.id,
+              webformatURL: el.webformatURL,
+              largeImageURL: el.largeImageURL,
+              tags: el.tags,
+            })),
+          ])
           setIsLastPage(
             currentPage + 1 >= Math.trunc(data.totalHits / perPage) + 1
               ? true
               : false,
           )
-          setCurrentPage((prevState) => prevState + 1)
           setIsLoading(false)
 
           if (myRef.current) {
@@ -86,25 +80,15 @@ export default function Main() {
           toast.error(error.message)
         })
     }
-  }, [isLoading])
+  }, [isLoading, searchQuery, currentPage, perPage])
 
   return (
     <>
       <Searchbar onSetQuery={onChangeQuery} />
-      <ImageGallery
-        itemsImg={itemsImg}
-        myRef={myRef}
-        onClickImg={(el) => {
-          setItemLooking({ src: el.dataset.src, tags: el.alt })
-        }}
-      />
+      <ImageGallery itemsImg={itemsImg} myRef={myRef} onClickImg={onClickImg} />
       {isLoading && <Loader />}
       {searchQuery && !isLastPage && !isLoading && (
-        <Button
-          onClickMore={() => {
-            setIsLoading(true)
-          }}
-        />
+        <Button onClickMore={onClickMore} />
       )}
       {itemLooking && (
         <Modal

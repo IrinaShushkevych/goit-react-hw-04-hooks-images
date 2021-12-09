@@ -3,11 +3,17 @@ import { createPortal } from 'react-dom'
 import PropTypes from 'prop-types'
 import s from './Modal.module.css'
 
-export default function Modal({ item, onCloseModal }) {
-  const root = document.querySelector('#root-modal')
+const root = document.querySelector('#root-modal')
 
+export default function Modal({ item, onCloseModal }) {
   const onCloseKey = (e) => {
     if (e.code === 'Escape') {
+      onCloseModal()
+    }
+  }
+
+  const onCloseBackdrop = (e) => {
+    if (e.target === e.currentTarget) {
       onCloseModal()
     }
   }
@@ -21,14 +27,7 @@ export default function Modal({ item, onCloseModal }) {
 
   const { src, tags } = item
   return createPortal(
-    <div
-      className={s.overlay}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) {
-          onCloseModal()
-        }
-      }}
-    >
+    <div className={s.overlay} onClick={onCloseBackdrop}>
       <div className={s.modal}>
         <img src={src} alt={tags} />
       </div>
