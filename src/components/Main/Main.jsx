@@ -55,21 +55,13 @@ export default function Main() {
             return
           }
 
-          setItemsImg((prevState) => [
-            ...prevState,
-            ...data.hits.map((el) => ({
-              id: el.id,
-              webformatURL: el.webformatURL,
-              largeImageURL: el.largeImageURL,
-              tags: el.tags,
-            })),
-          ])
+          setIsLoading(false)
+          setItemsImg([...itemsImg, ...data.hits])
           setIsLastPage(
             currentPage + 1 >= Math.trunc(data.totalHits / perPage) + 1
               ? true
               : false,
           )
-          setIsLoading(false)
 
           if (myRef.current) {
             scrollToRef(myRef)
@@ -80,7 +72,7 @@ export default function Main() {
           toast.error(error.message)
         })
     }
-  }, [isLoading, searchQuery, currentPage, perPage])
+  }, [isLoading, searchQuery, currentPage, perPage, itemsImg])
 
   return (
     <>
