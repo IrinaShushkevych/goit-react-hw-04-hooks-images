@@ -1,3 +1,4 @@
+//created by Irina Shushkevych
 import PropTypes from 'prop-types'
 import s from './ImageGallery.module.css'
 import ImageGalleryItem from '../ImageGalleryItem'

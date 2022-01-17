@@ -1,3 +1,4 @@
+//created by Irina Shushkevych
 import { Component } from 'react'
 import PropTypes from 'prop-types'
 import ImageSearchIcon from '@mui/icons-material/ImageSearch'

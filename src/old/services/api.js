@@ -1,3 +1,4 @@
+//created by Irina Shushkevych
 import axios from "axios";
 
 const BASE_URL = "https://pixabay.com/api/";
